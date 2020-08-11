@@ -1,1 +1,4 @@
 target
+*.class
+*.so
+Blake3Jni.h

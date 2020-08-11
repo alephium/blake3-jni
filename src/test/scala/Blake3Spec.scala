@@ -10,16 +10,15 @@ class Blake3Spec extends AnyFlatSpecLike with Matchers {
 
   it should "correctly bind the `blake3` lib" in {
 
-    def test(init: (Blake3Jni, Long) => Unit, expected: TestCase => String)(testCase: TestCase) = {
+    def test(init: Long => Unit, expected: TestCase => String)(testCase: TestCase) = {
 
-      val blake3: Blake3Jni = new Blake3Jni()
-      val hasher = blake3.allocate_hasher()
+      val hasher = Blake3Jni.allocate_hasher()
 
-      init(blake3, hasher)
+      init(hasher)
 
       val testInput = makeTestInput(testCase.input_len)
 
-      blake3.blake3_hasher_update(hasher, testInput, testInput.length)
+      Blake3Jni.blake3_hasher_update(hasher, testInput, testInput.length)
 
       val outputLength = expected(testCase).length / 2
       var output: Array[Byte] = Array.ofDim[Byte](outputLength)
@@ -28,32 +27,32 @@ class Blake3Spec extends AnyFlatSpecLike with Matchers {
       var seekOutput: Array[Byte] = Array.ofDim[Byte](outputLength - seek)
 
 
-      blake3.blake3_hasher_finalize(hasher, output, outputLength)
-      blake3.blake3_hasher_finalize_seek(hasher, seek , seekOutput, outputLength - seek)
+      Blake3Jni.blake3_hasher_finalize(hasher, output, outputLength)
+      Blake3Jni.blake3_hasher_finalize_seek(hasher, seek , seekOutput, outputLength - seek)
 
       bytesToHex(output) shouldBe expected(testCase)
       bytesToHex(seekOutput) shouldBe expected(testCase).drop(seek * 2)
 
-      blake3.delete_hasher(hasher)
+      Blake3Jni.delete_hasher(hasher)
     }
 
     testVectors.cases.foreach(
-      test((blake3, hasher) =>
-          blake3.blake3_hasher_init(hasher),
+      test(hasher =>
+          Blake3Jni.blake3_hasher_init(hasher),
           _.hash
           )
         )
 
     testVectors.cases.foreach(
-      test((blake3, hasher) =>
-          blake3.blake3_hasher_init_keyed(hasher, testVectors.key.getBytes),
+      test(hasher =>
+          Blake3Jni.blake3_hasher_init_keyed(hasher, testVectors.key.getBytes),
           _.keyed_hash
           )
         )
 
     testVectors.cases.foreach(
-      test((blake3, hasher) =>
-          blake3.blake3_hasher_init_derive_key(hasher, testVectors.context_string),
+      test(hasher =>
+          Blake3Jni.blake3_hasher_init_derive_key(hasher, testVectors.context_string),
           _.derive_key
           )
         )

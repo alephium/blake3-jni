@@ -8,12 +8,12 @@ blake3_hasher* hasher_ptr(jlong self)
   return (blake3_hasher*)(uintptr_t)self;
 }
 
-uint8_t* get_byte_array(JNIEnv *env, jbyteArray array)
+jbyte* get_byte_array(JNIEnv *env, jbyteArray array)
 {
-  return (uint8_t*) (*env)->GetByteArrayElements(env, array, 0);
+  return  (*env)->GetByteArrayElements(env, array, 0);
 }
 
-void release_byte_array(JNIEnv *env, jbyteArray array, uint8_t* addr)
+void release_byte_array(JNIEnv *env, jbyteArray array, jbyte* addr)
 {
   return (*env)->ReleaseByteArrayElements(env, array, addr, 0);
 }
@@ -47,9 +47,9 @@ JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1ini
 JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1init_1keyed
   (JNIEnv *env, jobject obj, jlong self, jbyteArray key)
 {
-  uint8_t *key_addr = get_byte_array(env, key);
+  jbyte *key_addr = get_byte_array(env, key);
 
-  blake3_hasher_init_keyed(hasher_ptr(self), key_addr);
+  blake3_hasher_init_keyed(hasher_ptr(self), (uint8_t*)key_addr);
 
   return release_byte_array(env, key, key_addr);
 }
@@ -67,7 +67,7 @@ JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1ini
 JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1update
   (JNIEnv *env, jobject obj, jlong self, jbyteArray input, jint input_len)
 {
-  void *input_addr = get_byte_array(env, input);
+  jbyte *input_addr = get_byte_array(env, input);
 
   blake3_hasher_update(hasher_ptr(self), input_addr, input_len);
 
@@ -77,9 +77,9 @@ JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1upd
 JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1finalize
   (JNIEnv *env, jobject obj, jlong self, jbyteArray out, jint out_len)
 {
-  uint8_t *out_addr = get_byte_array(env, out);
+  jbyte *out_addr = get_byte_array(env, out);
 
-  blake3_hasher_finalize(hasher_ptr(self), out_addr, out_len);
+  blake3_hasher_finalize(hasher_ptr(self), (uint8_t*)out_addr, out_len);
 
   return release_byte_array(env, out, out_addr);
 }
@@ -87,9 +87,9 @@ JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1fin
 JNIEXPORT void JNICALL Java_org_alephium_blake3jni_Blake3Jni_blake3_1hasher_1finalize_1seek
   (JNIEnv *env, jobject obj, jlong self, jlong seek, jbyteArray out, jint out_len)
 {
-  uint8_t *out_addr = get_byte_array(env, out);
+  jbyte *out_addr = get_byte_array(env, out);
 
-  blake3_hasher_finalize_seek(hasher_ptr(self), seek, out_addr, out_len);
+  blake3_hasher_finalize_seek(hasher_ptr(self), seek, (uint8_t*)out_addr, out_len);
 
   return release_byte_array(env, out, out_addr);
 }

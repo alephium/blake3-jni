@@ -1,3 +1,5 @@
+package org.alephium.blake3jni;
+
 public class Blake3Jni {
 
     public final static native long allocate_hasher();

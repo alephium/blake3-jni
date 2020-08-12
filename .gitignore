@@ -1,4 +1,4 @@
 target
 *.class
 *.so
-Blake3Jni.h
+*Blake3Jni.h

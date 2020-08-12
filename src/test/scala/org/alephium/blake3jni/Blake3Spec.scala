@@ -1,6 +1,6 @@
-import java.nio.ByteBuffer
+package org.alephium.blake3jni
 
-import scala.jdk.CollectionConverters._
+import scala.io.Source
 
 import org.scalatest.flatspec.AnyFlatSpecLike
 import org.scalatest.matchers.should.Matchers
@@ -21,14 +21,14 @@ class Blake3Spec extends AnyFlatSpecLike with Matchers {
       Blake3Jni.blake3_hasher_update(hasher, testInput, testInput.length)
 
       val outputLength = expected(testCase).length / 2
-      var output: Array[Byte] = Array.ofDim[Byte](outputLength)
+      val output: Array[Byte] = Array.ofDim[Byte](outputLength)
 
       val seek = scala.util.Random.between(0, outputLength)
-      var seekOutput: Array[Byte] = Array.ofDim[Byte](outputLength - seek)
+      val seekOutput: Array[Byte] = Array.ofDim[Byte](outputLength - seek)
 
 
       Blake3Jni.blake3_hasher_finalize(hasher, output, outputLength)
-      Blake3Jni.blake3_hasher_finalize_seek(hasher, seek , seekOutput, outputLength - seek)
+      Blake3Jni.blake3_hasher_finalize_seek(hasher, seek.toLong , seekOutput, outputLength - seek)
 
       bytesToHex(output) shouldBe expected(testCase)
       bytesToHex(seekOutput) shouldBe expected(testCase).drop(seek * 2)
@@ -72,7 +72,7 @@ object Blake3Spec {
   case class TestVectors(_comment:String, key:String,context_string:String, cases:Seq[TestCase])
   implicit val testVectorsDecoder: Decoder[TestVectors] = deriveDecoder[TestVectors]
 
-  private val testVectorsJsonFile:String = scala.io.Source.fromFile("BLAKE3/test_vectors/test_vectors.json").getLines.mkString
+  private val testVectorsJsonFile:String = Source.fromFile("BLAKE3/test_vectors/test_vectors.json").getLines().mkString("")
 
   val testVectors = parse(testVectorsJsonFile).toOption.get.as[TestVectors].toOption.get
 

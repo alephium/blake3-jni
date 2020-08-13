@@ -1,4 +1,5 @@
 target
 *.class
 *.so
+*.dylib
 *Blake3Jni.h

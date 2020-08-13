@@ -5,7 +5,7 @@
 
 blake3_hasher* hasher_ptr(jlong self)
 {
-  return (blake3_hasher*)(uintptr_t)self;
+  return (blake3_hasher*)self;
 }
 
 jbyte* get_byte_array(JNIEnv *env, jbyteArray array)

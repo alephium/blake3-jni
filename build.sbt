@@ -1,6 +1,15 @@
-organization := "org.alephium"
 name := "blake3-jni"
-version := "0.2.0-SNAPSHOT"
+organization := "org.alephium"
+homepage := Some(url("https://github.com/alephium/blake3-jni"))
+licenses := Seq("LGPL 3.0" -> new URL("https://www.gnu.org/licenses/lgpl-3.0.en.html"))
+developers := List(
+  Developer(
+    id    = "alephium core dev",
+    name  = "alephium core dev",
+    email = "dev@alephium.org",
+    url   = url("https://alephium.org/")
+  )
+)
 
 scalaVersion := "2.13.3"
 

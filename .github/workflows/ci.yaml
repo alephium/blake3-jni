@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 8, 11 ]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -16,5 +19,5 @@ jobs:
           submodules: true
       - uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: ${{ matrix.java }}
       - run: sbt test
